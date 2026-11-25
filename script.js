@@ -18,3 +18,37 @@ const previewTheme = new URLSearchParams(location.search).get('theme');
 if (previewTheme === 'dark' || previewTheme === 'light') storedTheme = previewTheme;
 setTheme(storedTheme === 'dark');
 toggle.addEventListener('click', () => setTheme(!document.body.classList.contains('dark')));
+
+document.querySelectorAll('.interest-card').forEach((card) => {
+  card.addEventListener('click', () => {
+    const detail = document.getElementById(card.getAttribute('aria-controls'));
+    const willOpen = card.getAttribute('aria-expanded') !== 'true';
+
+    document.querySelectorAll('.interest-card').forEach((otherCard) => {
+      const otherDetail = document.getElementById(otherCard.getAttribute('aria-controls'));
+      otherCard.setAttribute('aria-expanded', 'false');
+      otherDetail.hidden = true;
+    });
+
+    card.setAttribute('aria-expanded', String(willOpen));
+    detail.hidden = !willOpen;
+  });
+});
+
+const greeting = document.querySelector('.typed-greeting');
+const greetingText = Array.from(greeting.textContent.trim());
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  greeting.textContent = greetingText.join('');
+} else {
+  greeting.textContent = '';
+  greeting.classList.add('is-typing');
+  let letter = 0;
+  const typingTimer = window.setInterval(() => {
+    greeting.textContent += greetingText[letter];
+    letter += 1;
+    if (letter >= greetingText.length) {
+      window.clearInterval(typingTimer);
+      greeting.classList.remove('is-typing');
+    }
+  }, 90);
+}
